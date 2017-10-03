@@ -23,6 +23,6 @@ let package = Package(
             dependencies: ["Platform", "Async"]),
         .testTarget(
             name: "ProcessTests",
-            dependencies: ["Process", "Test"]),
+            dependencies: ["Process", "Test", "AsyncDispatch"]),
     ]
 )
