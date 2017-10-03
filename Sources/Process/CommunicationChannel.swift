@@ -1,4 +1,7 @@
-import Foundation
+@_exported import class Foundation.Pipe
+@_exported import class Foundation.FileHandle
+
+import struct Foundation.Data
 
 public enum CommunicationChannel {
     case pipe(Pipe)
