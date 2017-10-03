@@ -2,6 +2,8 @@ import Test
 import AsyncDispatch
 @testable import Process
 
+import struct Foundation.Date
+
 class ProcessTests: TestCase {
     override func setUp() {
         AsyncDispatch().registerGlobal()
@@ -58,5 +60,14 @@ class ProcessTests: TestCase {
 
         assertNoThrow(try process.waitUntilExit())
         assertEqual(process.status, .exited(code: 0))
+    }
+
+    func testExitTimeout() {
+        let process = Process(name: "sleep", arguments: ["1"])
+        let date = Date(timeIntervalSinceNow: 0.1)
+        assertNoThrow(try process.launch())
+        assertThrowsError(try process.waitUntilExit(deadline: date)) { error in
+            assertEqual(error as? ProcessError, .timeout)
+        }
     }
 }

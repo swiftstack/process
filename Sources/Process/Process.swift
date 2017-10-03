@@ -4,6 +4,7 @@ import Foundation
 
 enum ProcessError: Error {
     case alreadyLaunched
+    case timeout
 }
 
 public class Process {
@@ -261,8 +262,11 @@ extension Process {
         return true
     }
 
-    public func waitUntilExit() throws {
+    public func waitUntilExit(deadline: Date = Date.distantFuture) throws {
         while updateStatus() == false {
+            if Date() > deadline {
+                throw ProcessError.timeout
+            }
             async.sleep(until: Date(timeIntervalSinceNow: 0.05))
         }
     }
