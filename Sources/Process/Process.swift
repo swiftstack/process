@@ -118,7 +118,7 @@ public class Process {
             for arg in argv ..< argv + arguments.count {
                 free(UnsafeMutableRawPointer(arg.pointee))
             }
-            argv.deallocate(capacity: arguments.count + 1)
+            argv.deallocate()
         }
 
         // Convert the environment into a posix_spawn-friendly format
@@ -136,7 +136,7 @@ public class Process {
             for pair in envp ..< envp + environment.count {
                 free(UnsafeMutableRawPointer(pair.pointee))
             }
-            envp.deallocate(capacity: environment.count + 1)
+            envp.deallocate()
         }
 
         // Initialize file actions
