@@ -1,12 +1,13 @@
 import Test
+import Time
 import AsyncDispatch
-@testable import Process
 
-import struct Foundation.Date
+@testable import Async
+@testable import Process
 
 class ProcessTests: TestCase {
     override func setUp() {
-        AsyncDispatch().registerGlobal()
+        async.setUp(Dispatch.self)
     }
 
     func testByName() {
@@ -64,9 +65,9 @@ class ProcessTests: TestCase {
 
     func testExitTimeout() {
         let process = Process(name: "sleep", arguments: ["1"])
-        let date = Date(timeIntervalSinceNow: 0.1)
         assertNoThrow(try process.launch())
-        assertThrowsError(try process.waitUntilExit(deadline: date)) { error in
+        assertThrowsError(try process.waitUntilExit(deadline: .now + 100.ms))
+        { error in
             assertEqual(error as? ProcessError, .timeout)
         }
     }
