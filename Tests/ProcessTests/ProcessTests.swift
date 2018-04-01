@@ -11,7 +11,7 @@ class ProcessTests: TestCase {
     }
 
     func testByName() {
-        do {
+        scope {
             let process = Process(name: "uname")
             process.standardOutput = .pipe(Pipe())
             try process.launch()
@@ -19,36 +19,32 @@ class ProcessTests: TestCase {
             assertNoThrow(try process.waitUntilExit())
 
             let result = process.standardOutput!.readAllText()
-        #if os(macOS)
+            #if os(macOS)
             assertEqual(result, "Darwin")
-        #else
+            #else
             assertEqual(result, "Linux")
-        #endif
-        } catch {
-            fail(String(describing: error))
+            #endif
         }
     }
 
     func testByPath() {
-        do {
-        #if os(macOS)
+        scope {
+            #if os(macOS)
             let process = Process(path: "/usr/bin/uname")
-        #else
+            #else
             let process = Process(path: "/bin/uname")
-        #endif
+            #endif
             process.standardOutput = .pipe(Pipe())
             try process.launch()
 
             assertNoThrow(try process.waitUntilExit())
 
             let result = process.standardOutput!.readAllText()
-        #if os(macOS)
+            #if os(macOS)
             assertEqual(result, "Darwin")
-        #else
+            #else
             assertEqual(result, "Linux")
-        #endif
-        } catch {
-            fail(String(describing: error))
+            #endif
         }
     }
 
