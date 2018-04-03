@@ -19,6 +19,9 @@ let package = Package(
         .package(
             url: "https://github.com/swift-stack/test.git",
             .branch("master")),
+        .package(
+            url: "https://github.com/swift-stack/fiber.git",
+            .branch("master"))
     ],
     targets: [
         .target(
@@ -26,6 +29,6 @@ let package = Package(
             dependencies: ["Platform", "Time", "Async"]),
         .testTarget(
             name: "ProcessTests",
-            dependencies: ["Process", "Test", "AsyncDispatch"]),
+            dependencies: ["Process", "Test", "Fiber"])
     ]
 )
