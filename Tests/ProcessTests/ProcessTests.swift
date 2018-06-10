@@ -1,5 +1,6 @@
 import Test
 import Time
+import File
 import Fiber
 
 @testable import Async
@@ -82,5 +83,40 @@ class ProcessTests: TestCase {
             }
         }
         async.loop.run()
+    }
+
+    func testFileChannel() {
+        async.task {
+            scope {
+                let input = try File.randomTempFile()
+                let output = try File.randomTempFile()
+
+                try input.create()
+                try output.create()
+
+                let process = Process(name: "uname")
+                process.standardInput = .file(input)
+                process.standardOutput = .file(output)
+                try process.launch()
+
+                assertNoThrow(try process.waitUntilExit())
+
+                let result = process.standardOutput!.readAllText()
+                #if os(macOS)
+                assertEqual(result, "Darwin")
+                #else
+                assertEqual(result, "Linux")
+                #endif
+            }
+        }
+        async.loop.run()
+    }
+}
+
+
+extension File {
+    static func randomTempFile() throws -> File {
+        let name = "fileTest\((1_000..<2_000).randomElement() ?? 0)"
+        return try File(path: Path(string: "/tmp/\(name)"))
     }
 }

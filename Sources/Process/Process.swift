@@ -1,7 +1,7 @@
 import Time
+import File
 import Async
 import Platform
-import Foundation
 
 enum ProcessError: Error {
     case alreadyLaunched
@@ -26,7 +26,7 @@ public class Process {
     public var arguments: [String]
     public var environment: [String : String]
 
-    open var currentDirectoryPath: String
+    open var currentDirectory: Directory
 
     public private(set) var processIdentifier: Int32 = -1
 
@@ -34,39 +34,39 @@ public class Process {
         source: Source,
         arguments: [String],
         environment: [String : String],
-        currentDirectoryPath: String
+        currentDirectory: Directory
     ) {
         self.source = source
         self.arguments = arguments
         self.environment = environment
-        self.currentDirectoryPath = currentDirectoryPath
+        self.currentDirectory = currentDirectory
         self._status = .created
     }
 
     public convenience init(
         path: String,
         arguments: [String] = [],
-        environment: [String : String] = ProcessInfo.processInfo.environment,
-        currentDirectoryPath: String = FileManager.default.currentDirectoryPath
+        environment: [String : String] = Environment.values,
+        currentDirectory: Directory = .current ?? .default
     ) {
         self.init(
             source: .path(path),
             arguments: arguments,
             environment: environment,
-            currentDirectoryPath: currentDirectoryPath)
+            currentDirectory: currentDirectory)
     }
 
     public convenience init(
         name: String,
         arguments: [String] = [],
-        environment: [String : String] = ProcessInfo.processInfo.environment,
-        currentDirectoryPath: String = FileManager.default.currentDirectoryPath
+        environment: [String : String] = Environment.values,
+        currentDirectory: Directory = .current ?? .default
     ) {
         self.init(
             source: .name(name),
             arguments: arguments,
             environment: environment,
-            currentDirectoryPath: currentDirectoryPath)
+            currentDirectory: currentDirectory)
     }
 
     private var _status: Status
@@ -167,8 +167,9 @@ public class Process {
                 fdsToDuplicate.append(
                     (STDIN_FILENO, pipe.fileHandleForReading.fileDescriptor))
                 fdsToClose.insert(pipe.fileHandleForWriting.fileDescriptor)
-            case .fileHandle(let handle):
-                fdsToDuplicate.append((STDIN_FILENO, handle.fileDescriptor))
+            case .file(let file):
+                let fd = try system { open(file.path.string, O_RDONLY) }
+                fdsToDuplicate.append((STDIN_FILENO, fd))
             }
         }
 
@@ -178,8 +179,9 @@ public class Process {
                 fdsToDuplicate.append(
                     (STDOUT_FILENO, pipe.fileHandleForWriting.fileDescriptor))
                 fdsToClose.insert(pipe.fileHandleForReading.fileDescriptor)
-            case .fileHandle(let handle):
-                fdsToDuplicate.append((STDOUT_FILENO, handle.fileDescriptor))
+            case .file(let file):
+                let fd = try system { open(file.path.string, O_WRONLY) }
+                fdsToDuplicate.append((STDOUT_FILENO, fd))
             }
         }
 
@@ -189,8 +191,9 @@ public class Process {
                 fdsToDuplicate.append(
                     (STDERR_FILENO, pipe.fileHandleForWriting.fileDescriptor))
                 fdsToClose.insert(pipe.fileHandleForReading.fileDescriptor)
-            case .fileHandle(let handle):
-                fdsToDuplicate.append((STDERR_FILENO, handle.fileDescriptor))
+            case .file(let file):
+                let fd = try system { open(file.path.string, O_WRONLY) }
+                fdsToDuplicate.append((STDERR_FILENO, fd))
             }
         }
 
@@ -206,11 +209,8 @@ public class Process {
         }
 
         // Change current directory path
-        let fileManager = FileManager()
-        let previousDirectoryPath = fileManager.currentDirectoryPath
-        if !fileManager.changeCurrentDirectoryPath(currentDirectoryPath) {
-            throw SystemError()
-        }
+        let previousDirectory: Directory = .current ?? .default
+        try Directory.changeWorkingDirectory(to: currentDirectory.path)
 
         // Launch the process
         var pid = pid_t()
@@ -225,7 +225,7 @@ public class Process {
         }
 
         // Reset the previous working directory path.
-        fileManager.changeCurrentDirectoryPath(previousDirectoryPath)
+        try Directory.changeWorkingDirectory(to: previousDirectory.path)
 
         // Close the read end of input and the write end of the output pipes.
         if let input = standardInput, case .pipe(let pipe) = input {
@@ -287,6 +287,17 @@ extension Process.Status: Equatable {
         case (.signaled(let lhs), .signaled(let rhs)): return lhs == rhs
         case (.exited(let lhs), .exited(let rhs)): return lhs == rhs
         default: return false
+        }
+    }
+}
+
+extension Directory {
+    public static var `default`: Directory {
+        do {
+            let path = try Path(string: "~/").expandingTilde()
+            return Directory(path: path)
+        } catch {
+            return "/"
         }
     }
 }

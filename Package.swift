@@ -17,18 +17,21 @@ let package = Package(
             url: "https://github.com/swift-stack/async.git",
             .branch("master")),
         .package(
-            url: "https://github.com/swift-stack/test.git",
+            url: "https://github.com/swift-stack/fiber.git",
             .branch("master")),
         .package(
-            url: "https://github.com/swift-stack/fiber.git",
+            url: "https://github.com/swift-stack/aio.git",
+            .branch("master")),
+        .package(
+            url: "https://github.com/swift-stack/test.git",
             .branch("master"))
     ],
     targets: [
         .target(
             name: "Process",
-            dependencies: ["Platform", "Time", "Async"]),
+            dependencies: ["Platform", "Time", "Async", "AIO"]),
         .testTarget(
             name: "ProcessTests",
-            dependencies: ["Process", "Test", "Fiber"])
+            dependencies: ["Process", "Test", "Fiber", "AIO"])
     ]
 )
