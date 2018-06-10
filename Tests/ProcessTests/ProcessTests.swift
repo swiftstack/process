@@ -58,7 +58,7 @@ class ProcessTests: TestCase {
     func testStatus() {
         async.task {
             scope {
-                let process = Process(name: "uname")
+                let process = Process(name: "sleep", arguments: ["1"])
                 assertEqual(process.status, .created)
 
                 assertNoThrow(try process.launch())
