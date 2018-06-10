@@ -94,6 +94,11 @@ class ProcessTests: TestCase {
                 try input.create()
                 try output.create()
 
+                defer {
+                    try? input.remove()
+                    try? output.remove()
+                }
+
                 let process = Process(name: "uname")
                 process.standardInput = .file(input)
                 process.standardOutput = .file(output)
