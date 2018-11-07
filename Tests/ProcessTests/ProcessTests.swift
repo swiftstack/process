@@ -122,6 +122,6 @@ class ProcessTests: TestCase {
 extension File {
     static func randomTempFile() throws -> File {
         let name = "fileTest\((1_000..<2_000).randomElement() ?? 0)"
-        return try File(path: Path(string: "/tmp/\(name)"))
+        return try File(at: Path("/tmp/\(name)"))
     }
 }

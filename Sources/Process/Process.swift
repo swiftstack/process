@@ -294,8 +294,8 @@ extension Process.Status: Equatable {
 extension Directory {
     public static var `default`: Directory {
         do {
-            let path = try Path(string: "~/").expandingTilde()
-            return Directory(path: path)
+            let path = try Path("~/").expandingTilde()
+            return Directory(at: path)
         } catch {
             return "/"
         }
