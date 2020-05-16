@@ -18,13 +18,13 @@ class ProcessTests: TestCase {
                 process.standardOutput = .pipe(Pipe())
                 try process.launch()
 
-                assertNoThrow(try process.waitUntilExit())
+                try process.waitUntilExit()
 
                 let result = process.standardOutput!.readAllText()
                 #if os(macOS)
-                assertEqual(result, "Darwin")
+                expect(result == "Darwin")
                 #else
-                assertEqual(result, "Linux")
+                expect(result == "Linux")
                 #endif
             }
         }
@@ -42,13 +42,13 @@ class ProcessTests: TestCase {
                 process.standardOutput = .pipe(Pipe())
                 try process.launch()
 
-                assertNoThrow(try process.waitUntilExit())
+                try process.waitUntilExit()
 
                 let result = process.standardOutput!.readAllText()
                 #if os(macOS)
-                assertEqual(result, "Darwin")
+                expect(result == "Darwin")
                 #else
-                assertEqual(result, "Linux")
+                expect(result == "Linux")
                 #endif
             }
         }
@@ -59,13 +59,13 @@ class ProcessTests: TestCase {
         async.task {
             scope {
                 let process = Process(name: "sleep", arguments: ["1"])
-                assertEqual(process.status, .created)
+                expect(process.status == .created)
 
-                assertNoThrow(try process.launch())
-                assertEqual(process.status, .running)
+                try process.launch()
+                expect(process.status == .running)
 
-                assertNoThrow(try process.waitUntilExit())
-                assertEqual(process.status, .exited(code: 0))
+                try process.waitUntilExit()
+                expect(process.status == .exited(code: 0))
             }
         }
         async.loop.run()
@@ -75,10 +75,9 @@ class ProcessTests: TestCase {
         async.task {
             scope {
                 let process = Process(name: "sleep", arguments: ["1"])
-                assertNoThrow(try process.launch())
-                assertThrowsError(try process.waitUntilExit(deadline: .now + 100.ms))
-                { error in
-                    assertEqual(error as? ProcessError, .timeout)
+                try process.launch()
+                expect(throws: ProcessError.timeout) {
+                    try process.waitUntilExit(deadline: .now + 100.ms)
                 }
             }
         }
@@ -104,13 +103,13 @@ class ProcessTests: TestCase {
                 process.standardOutput = .file(output)
                 try process.launch()
 
-                assertNoThrow(try process.waitUntilExit())
+                try process.waitUntilExit()
 
                 let result = process.standardOutput!.readAllText()
                 #if os(macOS)
-                assertEqual(result, "Darwin")
+                expect(result == "Darwin")
                 #else
-                assertEqual(result, "Linux")
+                expect(result == "Linux")
                 #endif
             }
         }
