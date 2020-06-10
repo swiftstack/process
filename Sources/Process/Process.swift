@@ -1,7 +1,7 @@
 import Time
-import File
 import Async
 import Platform
+import FileSystem
 
 enum ProcessError: Error {
     case alreadyLaunched
@@ -295,9 +295,9 @@ extension Directory {
     public static var `default`: Directory {
         do {
             let path = try Path("~/").expandingTilde()
-            return Directory(at: path)
+            return try Directory(at: path)
         } catch {
-            return "/"
+            return try! .init(at: "/")
         }
     }
 }

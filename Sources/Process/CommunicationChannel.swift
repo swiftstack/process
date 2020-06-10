@@ -1,6 +1,6 @@
 @_exported import class Foundation.Pipe
 
-import File
+import FileSystem
 import struct Foundation.Data
 
 public enum CommunicationChannel {

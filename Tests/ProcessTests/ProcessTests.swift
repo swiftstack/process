@@ -1,7 +1,7 @@
 import Test
 import Time
-import File
 import Fiber
+import FileSystem
 
 @testable import Async
 @testable import Process
