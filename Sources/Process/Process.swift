@@ -274,7 +274,7 @@ extension Process {
             if deadline < .now {
                 throw ProcessError.timeout
             }
-            async.sleep(until: .now + 50.ms)
+            sleep(until: .now + 50.ms)
         }
     }
 }

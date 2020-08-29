@@ -1,18 +1,13 @@
 import Test
 import Time
-import Fiber
+import Async
 import FileSystem
 
-@testable import Async
 @testable import Process
 
 class ProcessTests: TestCase {
-    override func setUp() {
-        async.setUp(Fiber.self)
-    }
-
     func testByName() {
-        async.task {
+        async {
             scope {
                 let process = Process(name: "uname")
                 process.standardOutput = .pipe(Pipe())
@@ -28,11 +23,11 @@ class ProcessTests: TestCase {
                 #endif
             }
         }
-        async.loop.run()
+        loop.run()
     }
 
     func testByPath() {
-        async.task {
+        async {
             scope {
                 #if os(macOS)
                 let process = Process(path: "/usr/bin/uname")
@@ -52,11 +47,11 @@ class ProcessTests: TestCase {
                 #endif
             }
         }
-        async.loop.run()
+        loop.run()
     }
 
     func testStatus() {
-        async.task {
+        async {
             scope {
                 let process = Process(name: "sleep", arguments: ["1"])
                 expect(process.status == .created)
@@ -68,11 +63,11 @@ class ProcessTests: TestCase {
                 expect(process.status == .exited(code: 0))
             }
         }
-        async.loop.run()
+        loop.run()
     }
 
     func testExitTimeout() {
-        async.task {
+        async {
             scope {
                 let process = Process(name: "sleep", arguments: ["1"])
                 try process.launch()
@@ -81,11 +76,11 @@ class ProcessTests: TestCase {
                 }
             }
         }
-        async.loop.run()
+        loop.run()
     }
 
     func testFileChannel() {
-        async.task {
+        async {
             scope {
                 let input = try File.randomTempFile()
                 let output = try File.randomTempFile()
@@ -113,7 +108,7 @@ class ProcessTests: TestCase {
                 #endif
             }
         }
-        async.loop.run()
+        loop.run()
     }
 }
 
