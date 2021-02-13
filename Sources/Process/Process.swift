@@ -1,5 +1,4 @@
 import Time
-import Async
 import Platform
 import FileSystem
 
@@ -269,13 +268,18 @@ extension Process {
         return true
     }
 
-    public func waitUntilExit(deadline: Time = .distantFuture) throws {
-        while updateStatus() == false {
-            if deadline < .now {
-                throw ProcessError.timeout
+    public func waitUntilExit(deadline: Time = .distantFuture) async throws {
+        let handle = Task.runDetached {
+            while self.updateStatus() == false {
+                if deadline < .now {
+                    throw ProcessError.timeout
+                }
+                // FIXME
+                // sleep(until: .now + 50.ms)
+                usleep(1_000)
             }
-            sleep(until: .now + 50.ms)
         }
+        try await handle.get()
     }
 }
 

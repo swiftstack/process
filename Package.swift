@@ -11,15 +11,13 @@ let package = Package(
     dependencies: [
         .package(name: "Platform"),
         .package(name: "Time"),
-        .package(name: "Async"),
-        .package(name: "Fiber"),
         .package(name: "FileSystem"),
         .package(name: "Test")
     ],
     targets: [
         .target(
             name: "Process",
-            dependencies: ["Platform", "Time", "Async", "FileSystem"],
+            dependencies: ["Platform", "Time", "FileSystem"],
             swiftSettings: [
                 .unsafeFlags(["-Xfrontend", "-enable-experimental-concurrency"])
             ]),

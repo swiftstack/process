@@ -7,25 +7,26 @@ public enum CommunicationChannel {
     case pipe(Pipe)
     case file(File)
 
-    public func readAllText() -> String {
+    public func readAllText() async -> String {
         switch self {
         case .pipe(let pipe): return pipe.readAllText()
-        case .file(let file): return file.readAllText()
+        case .file(let file): return await file.readAllText()
         }
     }
 
-    public var availableData: Data {
+    // FIXME: should be property
+    public func availableData() async ->  Data {
         switch self {
         case .pipe(let pipe): return pipe.availableData
-        case .file(let file): return file.availableData
+        case .file(let file): return await file.availableData()
         }
     }
 }
 
 extension File {
-    public func readAllText() -> String {
+    public func readAllText() async -> String {
         do {
-            return try open()
+            return try await open()
                 .readUntilEnd(as: String.self)
                 .trimmingCharacters(in: .whitespacesAndNewlines)
         } catch {
@@ -33,12 +34,10 @@ extension File {
         }
     }
 
-    public var availableData: Data {
-        do {
-            return Data(try open().readUntilEnd())
-        } catch {
-            return Data()
-        }
+    // FIXME: should be property
+    public func availableData() async -> Data {
+        do { return Data(try await self.open().readUntilEnd()) }
+        catch { return Data() }
     }
 }
 
