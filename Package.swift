@@ -13,19 +13,19 @@ let package = Package(
         .package(name: "Time"),
         .package(name: "Async"),
         .package(name: "Fiber"),
-        .package(name: "AIO"),
+        .package(name: "FileSystem"),
         .package(name: "Test")
     ],
     targets: [
         .target(
             name: "Process",
-            dependencies: ["Platform", "Time", "Async", "AIO"],
+            dependencies: ["Platform", "Time", "Async", "FileSystem"],
             swiftSettings: [
                 .unsafeFlags(["-Xfrontend", "-enable-experimental-concurrency"])
             ]),
         .testTarget(
             name: "ProcessTests",
-            dependencies: ["Process", "Test", "Fiber", "AIO"],
+            dependencies: ["Process", "Test", "Fiber", "FileSystem"],
             swiftSettings: [
                 .unsafeFlags(["-Xfrontend", "-enable-experimental-concurrency"])
             ])
