@@ -23,9 +23,10 @@ let package = Package(
             swiftSettings: [
                 .unsafeFlags(["-Xfrontend", "-enable-experimental-concurrency"])
             ]),
-        .testTarget(
-            name: "ProcessTests",
-            dependencies: ["Process", "Test", "Fiber", "FileSystem"],
+        .executableTarget(
+            name: "Tests/Process",
+            dependencies: ["Process", "Test", "FileSystem"],
+            path: "Tests/Process",
             swiftSettings: [
                 .unsafeFlags(["-Xfrontend", "-enable-experimental-concurrency"])
             ])
