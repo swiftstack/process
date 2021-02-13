@@ -19,10 +19,16 @@ let package = Package(
     targets: [
         .target(
             name: "Process",
-            dependencies: ["Platform", "Time", "Async", "AIO"]),
+            dependencies: ["Platform", "Time", "Async", "AIO"],
+            swiftSettings: [
+                .unsafeFlags(["-Xfrontend", "-enable-experimental-concurrency"])
+            ]),
         .testTarget(
             name: "ProcessTests",
-            dependencies: ["Process", "Test", "Fiber", "AIO"])
+            dependencies: ["Process", "Test", "Fiber", "AIO"],
+            swiftSettings: [
+                .unsafeFlags(["-Xfrontend", "-enable-experimental-concurrency"])
+            ])
     ]
 )
 
