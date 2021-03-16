@@ -269,7 +269,7 @@ extension Process {
     }
 
     public func waitUntilExit(deadline: Time = .distantFuture) async throws {
-        let handle = Task.runDetached {
+        let handle: Task.Handle<Void, ProcessError> = Task.runDetached {
             while self.updateStatus() == false {
                 if deadline < .now {
                     throw ProcessError.timeout
