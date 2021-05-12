@@ -269,17 +269,12 @@ extension Process {
     }
 
     public func waitUntilExit(deadline: Time = .distantFuture) async throws {
-        let handle: Task.Handle<Void, ProcessError> = Task.runDetached {
-            while self.updateStatus() == false {
-                if deadline < .now {
-                    throw ProcessError.timeout
-                }
-                // FIXME
-                // sleep(until: .now + 50.ms)
-                usleep(1_000)
+        while self.updateStatus() == false {
+            if deadline < .now {
+                throw ProcessError.timeout
             }
+            await Task.sleep(UInt64(50.ms.nanoseconds))
         }
-        try await handle.get()
     }
 }
 
