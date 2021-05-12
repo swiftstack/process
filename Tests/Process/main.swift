@@ -52,7 +52,7 @@ test.case("Status") {
 test.case("ExitTimeout") {
     let process = Process(name: "sleep", arguments: ["1"])
     try process.launch()
-    expect(throws: ProcessError.timeout) {
+    await expect(throws: ProcessError.timeout) {
         try await process.waitUntilExit(deadline: .now + 100.ms)
     }
 }
