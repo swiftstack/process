@@ -14,11 +14,12 @@ public enum CommunicationChannel {
         }
     }
 
-    // FIXME: should be property
-    public func availableData() async ->  Data {
-        switch self {
-        case .pipe(let pipe): return pipe.availableData
-        case .file(let file): return await file.availableData()
+    public var availableData: Data {
+        get async {
+            switch self {
+            case .pipe(let pipe): return pipe.availableData
+            case .file(let file): return await file.availableData
+            }
         }
     }
 }
@@ -34,10 +35,11 @@ extension File {
         }
     }
 
-    // FIXME: should be property
-    public func availableData() async -> Data {
-        do { return Data(try await self.open().readUntilEnd()) }
-        catch { return Data() }
+    public var availableData: Data {
+        get async {
+            do { return Data(try await self.open().readUntilEnd()) }
+            catch { return Data() }
+        }
     }
 }
 
