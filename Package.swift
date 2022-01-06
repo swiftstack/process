@@ -12,7 +12,7 @@ let package = Package(
         .package(name: "Platform"),
         .package(name: "Time"),
         .package(name: "FileSystem"),
-        .package(name: "Test")
+        .package(name: "Test"),
     ],
     targets: [
         .target(
