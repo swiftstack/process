@@ -17,19 +17,11 @@ let package = Package(
     targets: [
         .target(
             name: "Process",
-            dependencies: ["Platform", "Time", "FileSystem"],
-            swiftSettings: [
-                .unsafeFlags(["-Xfrontend", "-disable-availability-checking"]),
-                .unsafeFlags(["-Xfrontend", "-enable-experimental-concurrency"])
-            ]),
+            dependencies: ["Platform", "Time", "FileSystem"]),
         .executableTarget(
             name: "Tests/Process",
             dependencies: ["Process", "Test", "FileSystem"],
-            path: "Tests/Process",
-            swiftSettings: [
-                .unsafeFlags(["-Xfrontend", "-disable-availability-checking"]),
-                .unsafeFlags(["-Xfrontend", "-enable-experimental-concurrency"])
-            ])
+            path: "Tests/Process"),
     ]
 )
 
