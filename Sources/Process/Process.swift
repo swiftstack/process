@@ -273,7 +273,7 @@ extension Process {
             if deadline < .now {
                 throw ProcessError.timeout
             }
-            await Task.sleep(UInt64(50.ms.nanoseconds))
+            try await Task.sleep(nanoseconds: UInt64(50.ms.nanoseconds))
         }
     }
 }
