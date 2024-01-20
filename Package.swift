@@ -25,7 +25,8 @@ let package = Package(
                 .product(name: "Platform", package: "platform"),
                 .product(name: "Time", package: "time"),
                 .product(name: "FileSystem", package: "filesystem"),
-            ]),
+            ],
+            swiftSettings: swift6),
         .executableTarget(
             name: "Tests/Process",
             dependencies: [
@@ -33,9 +34,19 @@ let package = Package(
                 .product(name: "FileSystem", package: "filesystem"),
                 .product(name: "Test", package: "test"),
             ],
-            path: "Tests/Process"),
+            path: "Tests/Process",
+            swiftSettings: swift6),
     ]
 )
+
+let swift6: [SwiftSetting] = [
+    .enableUpcomingFeature("ConciseMagicFile"),
+    .enableUpcomingFeature("ForwardTrailingClosures"),
+    .enableUpcomingFeature("ExistentialAny"),
+    .enableUpcomingFeature("StrictConcurrency"),
+    .enableUpcomingFeature("ImplicitOpenExistentials"),
+    .enableUpcomingFeature("BareSlashRegexLiterals"),
+]
 
 // MARK: - custom package source
 
