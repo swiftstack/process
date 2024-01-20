@@ -4,7 +4,7 @@ import FileSystem
 
 @testable import Process
 
-test.case("ByName") {
+test("ByName") {
     let process = Process(name: "uname")
     process.standardOutput = .pipe(Pipe())
     try process.launch()
@@ -19,7 +19,7 @@ test.case("ByName") {
     #endif
 }
 
-test.case("ByPath") {
+test("ByPath") {
     #if os(macOS)
     let process = Process(path: "/usr/bin/uname")
     #else
@@ -38,7 +38,7 @@ test.case("ByPath") {
     #endif
 }
 
-test.case("Status") {
+test("Status") {
     let process = Process(name: "sleep", arguments: ["1"])
     expect(process.status == .created)
 
@@ -49,7 +49,7 @@ test.case("Status") {
     expect(process.status == .exited(code: 0))
 }
 
-test.case("ExitTimeout") {
+test("ExitTimeout") {
     let process = Process(name: "sleep", arguments: ["1"])
     try process.launch()
     await expect(throws: ProcessError.timeout) {
@@ -57,7 +57,7 @@ test.case("ExitTimeout") {
     }
 }
 
-test.case("FileChannel") {
+test("FileChannel") {
     let input = try File.randomTempFile()
     let output = try File.randomTempFile()
 
@@ -84,7 +84,7 @@ test.case("FileChannel") {
     #endif
 }
 
-test.run()
+await run()
 
 extension File {
     static func randomTempFile() throws -> File {
