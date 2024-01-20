@@ -23,7 +23,7 @@ public class Process {
 
     public let source: Source
     public var arguments: [String]
-    public var environment: [String : String]
+    public var environment: [String: String]
 
     open var currentDirectory: Directory
 
@@ -32,7 +32,7 @@ public class Process {
     private init(
         source: Source,
         arguments: [String],
-        environment: [String : String],
+        environment: [String: String],
         currentDirectory: Directory
     ) {
         self.source = source
@@ -45,7 +45,7 @@ public class Process {
     public convenience init(
         path: String,
         arguments: [String] = [],
-        environment: [String : String] = Environment.values,
+        environment: [String: String] = Environment.values,
         currentDirectory: Directory = .current ?? .default
     ) {
         self.init(
@@ -58,7 +58,7 @@ public class Process {
     public convenience init(
         name: String,
         arguments: [String] = [],
-        environment: [String : String] = Environment.values,
+        environment: [String: String] = Environment.values,
         currentDirectory: Directory = .current ?? .default
     ) {
         self.init(
@@ -141,7 +141,7 @@ public class Process {
 
         // Initialize file actions
         #if os(macOS)
-            var fileActions: posix_spawn_file_actions_t? = nil
+            var fileActions: posix_spawn_file_actions_t?
         #else
             var fileActions: posix_spawn_file_actions_t =
                 posix_spawn_file_actions_t()
@@ -230,10 +230,10 @@ public class Process {
         if let input = standardInput, case .pipe(let pipe) = input {
             pipe.fileHandleForReading.closeFile()
         }
-        if let output = standardOutput, case .pipe(let pipe) = output  {
+        if let output = standardOutput, case .pipe(let pipe) = output {
             pipe.fileHandleForWriting.closeFile()
         }
-        if let output = standardError, case .pipe(let pipe) = output  {
+        if let output = standardError, case .pipe(let pipe) = output {
             pipe.fileHandleForWriting.closeFile()
         }
 
@@ -245,8 +245,8 @@ public class Process {
 extension Process {
     @discardableResult
     func updateStatus() -> Bool {
-        var exitCode : Int32 = 0
-        var waitResult : Int32 = 0
+        var exitCode: Int32 = 0
+        var waitResult: Int32 = 0
 
         repeat {
             waitResult = waitpid(processIdentifier, &exitCode, WNOHANG)
@@ -279,7 +279,7 @@ extension Process {
 }
 
 extension Process.Status: Equatable {
-    public static func ==(lhs: Process.Status, rhs: Process.Status) -> Bool {
+    public static func == (lhs: Process.Status, rhs: Process.Status) -> Bool {
         switch (lhs, rhs) {
         case (.created, .created): return true
         case (.running, .running): return true

@@ -37,8 +37,11 @@ extension File {
 
     public var availableData: Data {
         get async {
-            do { return Data(try await self.open().readUntilEnd()) }
-            catch { return Data() }
+            do {
+                return try await Data(open().readUntilEnd())
+            } catch {
+                return Data()
+            }
         }
     }
 }
