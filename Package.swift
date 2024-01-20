@@ -21,10 +21,18 @@ let package = Package(
     targets: [
         .target(
             name: "Process",
-            dependencies: ["Platform", "Time", "FileSystem"]),
+            dependencies: [
+                .product(name: "Platform", package: "platform"),
+                .product(name: "Time", package: "time"),
+                .product(name: "FileSystem", package: "filesystem"),
+            ]),
         .executableTarget(
             name: "Tests/Process",
-            dependencies: ["Process", "Test", "FileSystem"],
+            dependencies: [
+                .target(name: "Process"),
+                .product(name: "FileSystem", package: "filesystem"),
+                .product(name: "Test", package: "test"),
+            ],
             path: "Tests/Process"),
     ]
 )
@@ -71,6 +79,6 @@ extension Package.Dependency {
     static func package(name: String, source: Source) -> Package.Dependency {
         return source == .local
             ? .package(name: name, path: source.url(for: name))
-            : .package(name: name, url: source.url(for: name), .branch("dev"))
+            : .package(url: source.url(for: name), branch: "dev")
     }
 }
